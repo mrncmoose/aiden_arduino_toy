@@ -35,6 +35,7 @@ void setup() {
   
   // Attach the function you want to call to the timer interrupt
   servo1.attach(SERVO_PWM_PIN);
+  servo1.write(0);
   
   #if USONIC_NUMER_OF_PINS == 4
     pinMode(USONIC_TRIGGER_PIN, OUTPUT);
@@ -64,8 +65,6 @@ void setup() {
 }
 
 void loop() {
-  // Establish variables for duration of the ping, and the distance result
-  // in inches and centimeters:
   long distanceCm = getCmDistanceFromSensor();
   Serial.print(" distance (cm): ");
   Serial.println(distanceCm);
@@ -73,7 +72,7 @@ void loop() {
   // if the distance is in range, move the servo
   switch (distanceCm) {
     case 0 ... 50:
-      servo1.write(10);
+      servo1.write(0);
       digitalWrite(RED_LED_PIN, HIGH);
       digitalWrite(BLUE_LED_PIN, LOW);
       digitalWrite(GREEN_LED_PIN, LOW);
@@ -90,16 +89,18 @@ void loop() {
       colors[0] = strip.Color(255, 255, 0);   // Pixel 0: Red
       colors[1] = strip.Color(255, 255, 0); 
       colors[2] = strip.Color(255, 255, 255);
-      colors[3] = strip.Color(255, 255, 0); 
+      colors[3] = strip.Color(255, 255, 0);
+      break;
     case 101 ... 2500:
-      servo1.write(85);
+      servo1.write(180);
       digitalWrite(RED_LED_PIN, LOW);
       digitalWrite(BLUE_LED_PIN, LOW);
       digitalWrite(GREEN_LED_PIN, HIGH);
       colors[0] = strip.Color(125, 120, 25);   // Pixel 0: Red
       colors[1] = strip.Color(255, 100, 10); 
       colors[2] = strip.Color(255, 57, 60);
-      colors[3] = strip.Color(255, 85, 90); 
+      colors[3] = strip.Color(255, 85, 90);
+      break;
     default:
       Serial.println("Out of range.");
       break;
@@ -154,3 +155,4 @@ long getCmDistanceFromSensor(void) {
 void timerInterupFunction() {
   
 }
+
