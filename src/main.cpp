@@ -10,6 +10,13 @@
 #define GREEN_LED_PIN   6
 #define USONIC_NUMER_OF_PINS  4 // The number of pins on the ultrasonic distance sensor.
 
+#define MIN_DISTANCE  0
+#define MID_DISTANCE  10
+#define MID_DISTANCE1 11
+#define MAX_DISTANCE  100
+#define MAX_DISTANCE1 101
+#define INFINITE_DISTANCE 2500
+
 #if USONIC_NUMER_OF_PINS == 4
   #define USONIC_TRIGGER_PIN  7
   #define USONIC_ECHO_PIN   8
@@ -28,6 +35,7 @@ Adafruit_NeoPixel strip(NUM_PIXELS, NEO_PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
 void setFourPixels(uint32_t colorArray[]);
 long getCmDistanceFromSensor(void);
+void blinkNeoPixels(int);
 
 void setup() {
   // Initialize serial communication at 57600 bits per second
@@ -71,7 +79,7 @@ void loop() {
 
   // if the distance is in range, move the servo
   switch (distanceCm) {
-    case 0 ... 50:
+    case MIN_DISTANCE ... MID_DISTANCE:
       servo1.write(0);
       digitalWrite(RED_LED_PIN, HIGH);
       digitalWrite(BLUE_LED_PIN, LOW);
@@ -81,7 +89,7 @@ void loop() {
       colors[2] = strip.Color(255, 0, 255);
       colors[3] = strip.Color(255, 255, 0); 
       break;
-    case 51 ... 100:
+    case MID_DISTANCE1 ... MAX_DISTANCE:
       servo1.write(45);
       digitalWrite(RED_LED_PIN, LOW);
       digitalWrite(BLUE_LED_PIN, HIGH);
@@ -89,17 +97,17 @@ void loop() {
       colors[0] = strip.Color(255, 255, 0);   // Pixel 0: Red
       colors[1] = strip.Color(255, 255, 0); 
       colors[2] = strip.Color(255, 255, 255);
-      colors[3] = strip.Color(255, 255, 0);
+      colors[3] = strip.Color(0, 0, 0);
       break;
-    case 101 ... 2500:
+    case MAX_DISTANCE1 ... INFINITE_DISTANCE:
       servo1.write(180);
       digitalWrite(RED_LED_PIN, LOW);
       digitalWrite(BLUE_LED_PIN, LOW);
       digitalWrite(GREEN_LED_PIN, HIGH);
-      colors[0] = strip.Color(125, 120, 25);   // Pixel 0: Red
-      colors[1] = strip.Color(255, 100, 10); 
-      colors[2] = strip.Color(255, 57, 60);
-      colors[3] = strip.Color(255, 85, 90);
+      colors[0] = strip.Color(10, 255, 0);   
+      colors[1] = strip.Color(0, 0, 0); 
+      colors[2] = strip.Color(0, 0, 0);
+      colors[3] = strip.Color(0, 0, 0);
       break;
     default:
       Serial.println("Out of range.");
@@ -152,7 +160,7 @@ long getCmDistanceFromSensor(void) {
     return distanceCm;
 }
 
-void timerInterupFunction() {
-  
+void blinkNeoPixels(int duration) {
+
 }
 
