@@ -16,6 +16,7 @@
 #define MAX_DISTANCE  100
 #define MAX_DISTANCE1 101
 #define INFINITE_DISTANCE 2500
+#define BLINK_INTERVAL_MS 10
 
 #if USONIC_NUMER_OF_PINS == 4
   #define USONIC_TRIGGER_PIN  7
@@ -29,6 +30,8 @@ Servo servo1;
 // Pre-defined list of 4 distinct colors to pass to our function
 // Syntax: strip.Color(Red, Green, Blue) -> values range from 0 to 255
 uint32_t colors[4];
+unsigned long previousMillis;
+const long interval = 250;
 
 // Initialize the NeoPixel strip object
 Adafruit_NeoPixel strip(NUM_PIXELS, NEO_PIXEL_PIN, NEO_GRB + NEO_KHZ800);
@@ -73,6 +76,13 @@ void setup() {
 }
 
 void loop() {
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+    // Save the last time the color was updated
+    previousMillis = currentMillis;
+    blinkNeoPixels(BLINK_INTERVAL_MS);
+  }
+
   long distanceCm = getCmDistanceFromSensor();
   Serial.print(" distance (cm): ");
   Serial.println(distanceCm);
@@ -161,6 +171,15 @@ long getCmDistanceFromSensor(void) {
 }
 
 void blinkNeoPixels(int duration) {
-
+  uint32_t temp_color[4];
+  for(int i=0;i<4;i++) {
+    temp_color[i] = colors[i];
+    colors[i] = strip.Color(0, 0, 0);
+  }
+  setFourPixels(colors);
+  delay(duration);
+  setFourPixels(temp_color);
+  for(int i=0;i<4;i++){
+    colors[i] = temp_color[i];
+  }
 }
-
